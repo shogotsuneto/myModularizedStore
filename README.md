@@ -89,9 +89,24 @@ export default () => <App {...store} />;
 child count には変更が反映されるが、parent count には反映されない（1のまま）。
 結局storeのほうのincrementにコールバックをぶら下げサブスクるのが良いのだろう。
 
+```js
+const subscriptions = []
+export const addSubscription = (callback) => {
+  subscriptions.push(callback)
+}
+export let globalState = { count: 1 }
+export const increment = () => {
+  globalState = { count: globalState.count + 1 }
+}
+export const subscribedIncrement = () => {
+  globalState = { count: globalState.count + 1 }
+  subscriptions.forEach(callback => callback(globalState))
+}
+```
+
 結論：
 - Reduxで良い。
-- 親のボタンクリックがchild count に反映される謎が残る。
+- 親のボタンクリックで親は再描画されないのに子が再描画される謎。
 
 ---
 

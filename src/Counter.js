@@ -1,12 +1,20 @@
 import React from 'react'
-import { globalState, increment } from './store'
+import { addSubscription, globalState, subscribedIncrement } from './store'
 
 class Counter extends React.Component {
-  state = { count: globalState.count }
+  constructor(props) {
+    super(props)
+    this.state = { count: globalState.count }
+    addSubscription(this.onGlobalStateChange)
+  }
 
   increment = () => {
-    increment()
+    subscribedIncrement()
     this.setState({ count: globalState.count })
+  }
+
+  onGlobalStateChange = (globalState) => {
+    this.setState(globalState)
   }
 
   render() {

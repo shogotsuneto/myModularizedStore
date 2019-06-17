@@ -1,17 +1,22 @@
 import React from 'react';
 import './App.css';
-import * as store from './store'
+import {addSubscription, globalState, subscribedIncrement} from './store'
 import Counter from './Counter'
 
 class App extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { count: props.globalState.count }
+    this.state = { count: globalState.count }
+    addSubscription(this.onGlobalStateChange)
   }
 
   increment = () => {
-    this.props.increment()
-    this.setState({ count: this.props.globalState.count })
+    subscribedIncrement()
+    this.setState({ count: globalState.count })
+  }
+
+  onGlobalStateChange = (globalState) => {
+    this.setState(globalState)
   }
 
   render() {
@@ -19,7 +24,7 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header">
           <h2>Parent counter</h2>
-          <p>{this.props.globalState.count}</p>
+          <p>{this.state.count}</p>
           <button onClick={this.increment}>increment</button>
           <Counter />
         </header>
@@ -28,4 +33,4 @@ class App extends React.Component {
   }
 }
 
-export default () => <App {...store} />;
+export default App;
