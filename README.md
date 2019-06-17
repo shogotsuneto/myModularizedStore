@@ -1,9 +1,11 @@
-## 手順メモ
+## storeを実装する
 
 ```
 create-react-app mystore
 cd mystore
 ```
+
+## naiveな実装
 
 store.js
 ```js
@@ -12,6 +14,8 @@ export const increment = () => {
   globalState = { count: globalState.count + 1 }
 }
 ```
+
+これを複数箇所からimportする。
 
 App.js
 ```js
@@ -73,20 +77,13 @@ export default Counter
 ```
 
 ポイント：
-- export される値が変更されたら、その変更はimport先のファイルをまたいで維持される
+- export される値が変更されたら、その変更はimport先のファイルをまたいで維持される（反映されるかはともかく、親コンポーネントでも子コンポーネントでも最終的には値が同期されている）
   - 調べると binding がエクスポートされるとか書かれてるがよくわからない
-  - その具体例と思われるシングルインスタンスのエクスポートと関連づけた方が理解しやすい
+  - その具体例と思われる[シングルインスタンスのエクスポート](https://k94n.com/es6-modules-single-instance-pattern)と関連づけた方が理解しやすい
 - propsに渡してる訳ではないので、再描画されない場合がある
   - 子での変更は親に反映されない
-  - propsに渡せば良い？
 
-App.jsを以下のようにしたがダメだった。
-
-```js
-export default () => <App {...store} />;
-```
-
-child count には変更が反映されるが、parent count には反映されない（1のまま）。
+## subscription を実装
 結局storeのほうのincrementにコールバックをぶら下げサブスクるのが良いのだろう。
 
 ```js
@@ -104,7 +101,8 @@ export const subscribedIncrement = () => {
 }
 ```
 
-結論：
+## 結論
+
 - Reduxで良い。
 - 親のボタンクリックで親は再描画されないのに子が再描画される謎。
 
