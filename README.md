@@ -5,6 +5,80 @@ create-react-app mystore
 cd mystore
 ```
 
+store.js
+```js
+export let globalState = { count: 1 }
+export const increment = () => {
+  globalState = { count: globalState.count + 1 }
+}
+```
+
+App.js
+```js
+import React from 'react';
+import './App.css';
+import { globalState, increment } from './store'
+import Counter from './Counter'
+
+class App extends React.Component {
+  state = { count: globalState.count }
+
+  increment = () => {
+    increment()
+    this.setState({ count: globalState.count })
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <h2>Parent counter</h2>
+          <p>{globalState.count}</p>
+          <button onClick={this.increment}>increment</button>
+          <Counter />
+        </header>
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+Counter.js
+```js
+import React from 'react'
+import { globalState, increment } from './store'
+
+class Counter extends React.Component {
+  state = { count: globalState.count }
+
+  increment = () => {
+    increment()
+    this.setState({ count: globalState.count })
+  }
+
+  render() {
+    return (
+      <div>
+        <h2>Child counter</h2>
+        <p>{globalState.count}</p>
+        <button onClick={this.increment}>increment</button>
+      </div>
+    )
+  }
+}
+
+export default Counter
+```
+
+ポイント：
+- export される値が変更されたら、その変更はimport先のファイルをまたいで維持される
+  - 調べると binding がエクスポートされるとか書かれてるがよくわからない
+  - その具体例と思われるシングルインスタンスのエクスポートと関連づけた方が理解しやすい
+- propsに渡してる訳ではないので、再描画されない場合がある
+  - propsに渡せば良いはず
+
 ---
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
