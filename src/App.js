@@ -1,14 +1,17 @@
 import React from 'react';
 import './App.css';
-import { globalState, increment } from './store'
+import * as store from './store'
 import Counter from './Counter'
 
 class App extends React.Component {
-  state = { count: globalState.count }
+  constructor(props) {
+    super(props)
+    this.state = { count: props.globalState.count }
+  }
 
   increment = () => {
-    increment()
-    this.setState({ count: globalState.count })
+    this.props.increment()
+    this.setState({ count: this.props.globalState.count })
   }
 
   render() {
@@ -16,7 +19,7 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header">
           <h2>Parent counter</h2>
-          <p>{globalState.count}</p>
+          <p>{this.props.globalState.count}</p>
           <button onClick={this.increment}>increment</button>
           <Counter />
         </header>
@@ -25,4 +28,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default () => <App {...store} />;
